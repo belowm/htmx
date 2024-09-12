@@ -237,4 +237,20 @@ describe('hx-swap-oob attribute', function() {
       byId('td1').innerHTML.should.equal('hey')
     })
   }
+
+  it('handles oob swap where swapped node has hx-swap-oob="true"', function() {
+    this.server.respondWith('GET', '/test', `<span id="oob" hx-swap-oob="true">bar</span>`)
+
+    var page = make(`
+      <div hx-target="this" hx-boost="true">
+        <span id="oob" hx-swap-oob="true">foo</span>
+        <a id="link" href="/test">page1</a>
+      </div>
+    `)
+
+    byId('link').click()
+    this.server.respond()
+    should.not.equal(byId('oob'), null)
+    byId('oob').innerHTML.should.equal('bar')
+  })   
 })
